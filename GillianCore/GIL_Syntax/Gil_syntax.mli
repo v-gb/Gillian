@@ -523,39 +523,39 @@ module Formula : sig
     val forall : (string * Type.t option) list -> t -> t
 
     (** Same as Or *)
-    val ( #|| ) : t -> t -> t
+    val ( %|| ) : t -> t -> t
 
     (** Same as And *)
-    val ( #&& ) : t -> t -> t
+    val ( %&& ) : t -> t -> t
 
     (** Same as Eq *)
-    val ( #== ) : Expr.t -> Expr.t -> t
+    val ( %== ) : Expr.t -> Expr.t -> t
 
     (** Same as ILess *)
-    val ( #< ) : Expr.t -> Expr.t -> t
+    val ( %< ) : Expr.t -> Expr.t -> t
 
-    (** [a #> b] if [Not ILess (b, a)]*)
-    val ( #> ) : Expr.t -> Expr.t -> t
+    (** [a %> b] if [Not ILess (b, a)]*)
+    val ( %> ) : Expr.t -> Expr.t -> t
 
     (** Same as ILessEq *)
-    val ( #<= ) : Expr.t -> Expr.t -> t
+    val ( %<= ) : Expr.t -> Expr.t -> t
 
-    (** [a #>= b] is [Not ILess (b, a)] *)
-    val ( #>= ) : Expr.t -> Expr.t -> t
+    (** [a %>= b] is [Not ILess (b, a)] *)
+    val ( %>= ) : Expr.t -> Expr.t -> t
 
     (** Same as FLess *)
-    val ( #<. ) : Expr.t -> Expr.t -> t
+    val ( %<. ) : Expr.t -> Expr.t -> t
 
-    (** [a #>. b] if [Not FLess (b, a)]*)
-    val ( #>. ) : Expr.t -> Expr.t -> t
+    (** [a %>. b] if [Not FLess (b, a)]*)
+    val ( %>. ) : Expr.t -> Expr.t -> t
 
     (** Same as FLessEq *)
-    val ( #<=. ) : Expr.t -> Expr.t -> t
+    val ( %<=. ) : Expr.t -> Expr.t -> t
 
-    (** [a #>=. b] is [Not FLess (b, a)] *)
-    val ( #>=. ) : Expr.t -> Expr.t -> t
+    (** [a %>=. b] is [Not FLess (b, a)] *)
+    val ( %>=. ) : Expr.t -> Expr.t -> t
 
-    val ( #=> ) : t -> t -> t
+    val ( %=> ) : t -> t -> t
   end
 end
 

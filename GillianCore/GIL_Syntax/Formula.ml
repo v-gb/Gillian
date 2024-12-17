@@ -377,65 +377,65 @@ module Infix = struct
 
   let forall params f = ForAll (params, f)
 
-  let ( #== ) a b =
+  let ( %== ) a b =
     match (a, b) with
     | Expr.Lit la, Expr.Lit lb -> of_bool (Literal.equal la lb)
     | a, b when Expr.equal a b -> True
     | _ -> Eq (a, b)
 
-  let ( #|| ) a b =
+  let ( %|| ) a b =
     match (a, b) with
     | True, _ | _, True -> True
     | False, f | f, False -> f
     | _ -> Or (a, b)
 
-  let ( #&& ) a b =
+  let ( %&& ) a b =
     match (a, b) with
     | True, f | f, True -> f
     | False, _ | _, False -> False
     | _ -> And (a, b)
 
-  let ( #< ) a b =
+  let ( %< ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x < y)
     | _ -> ILess (a, b)
 
-  let ( #<= ) a b =
+  let ( %<= ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x <= y)
     | _ -> ILessEq (a, b)
 
-  let ( #> ) a b =
+  let ( %> ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x > y)
     | _ -> fnot (a %<= b)
 
-  let ( #>= ) a b =
+  let ( %>= ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x >= y)
     | _ -> fnot (a %< b)
 
-  let ( #<. ) a b =
+  let ( %<. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x < y)
     | _ -> FLess (a, b)
 
-  let ( #<=. ) a b =
+  let ( %<=. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x <= y)
     | _ -> FLessEq (a, b)
 
-  let ( #>. ) a b =
+  let ( %>. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x > y)
     | _ -> fnot (a %<= b)
 
-  let ( #>=. ) a b =
+  let ( %>=. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x >= y)
     | _ -> fnot (a %< b)
 
-  let ( #=> ) fa fb =
+  let ( %=> ) fa fb =
     match (fa, fb) with
     | True, _ -> fb
     | False, _ -> True
@@ -452,4 +452,4 @@ let rec conjunct (asrts : t list) : t =
   match asrts with
   | [] -> True
   | [ a ] -> a
-  | a :: r_asrts -> Infix.( #&& ) a (conjunct r_asrts)
+  | a :: r_asrts -> Infix.( %&& ) a (conjunct r_asrts)

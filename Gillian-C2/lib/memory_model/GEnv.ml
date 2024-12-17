@@ -16,7 +16,7 @@ module Make (Def_value : sig
 end) (Delayed_hack : sig
   type 'a t
 
-  val ( #== ) : Def_value.t -> Def_value.t -> Gil_syntax.Formula.t list
+  val ( %== ) : Def_value.t -> Def_value.t -> Gil_syntax.Formula.t list
 
   val return :
     ?learned:Gil_syntax.Formula.t list ->
@@ -244,7 +244,7 @@ module Concrete =
       let ( let+ ) a f = f a
       let resolve_or_create_lt x = x
       let return ?learned:_ ?learned_types:_ x = x
-      let ( #== ) _ _ = []
+      let ( %== ) _ _ = []
     end)
 
 module Symbolic =
@@ -277,7 +277,7 @@ module Symbolic =
 
       let ( let+ ) = map
 
-      let ( #== ) a b =
+      let ( %== ) a b =
         let open Gil_syntax.Formula.Infix in
         [ a %== b ]
 
