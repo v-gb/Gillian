@@ -176,7 +176,7 @@ module Mem = struct
     let open DR.Syntax in
     let** loc_name = resolve_loc_result loc in
     let open Formula.Infix in
-    if%sat size #<= (Expr.int 0) then
+    if%sat size %<= Expr.int 0 then
       DR.ok (map, MonadicSVal.SVArray.empty, Some Perm.Freeable)
     else
       let** tree = get_tree_res map loc_name (Some ofs) (Some chunk) in
@@ -188,7 +188,7 @@ module Mem = struct
   let prod_array map loc ofs size chunk array perm =
     let open DR.Syntax in
     let open Formula.Infix in
-    if%sat size #<= (Expr.int 0) then DR.ok map
+    if%sat size %<= Expr.int 0 then DR.ok map
     else
       let* loc_name = resolve_or_create_loc_name loc in
       let* tree = get_or_create_tree map loc_name in
@@ -215,7 +215,7 @@ module Mem = struct
     let open DR.Syntax in
     let open Formula.Infix in
     let** loc_name = resolve_loc_result loc in
-    if%sat high #<= low then DR.ok (map, Some Perm.Freeable)
+    if%sat high %<= low then DR.ok (map, Some Perm.Freeable)
     else
       let** tree = get_tree_res map loc_name None None in
       let++ new_tree, perm =
@@ -226,7 +226,7 @@ module Mem = struct
   let prod_simple ~sheap_producer map loc low high perm =
     let open DR.Syntax in
     let open Formula.Infix in
-    if%sat high #<= low then DR.ok map
+    if%sat high %<= low then DR.ok map
     else
       let* loc_name = resolve_or_create_loc_name loc in
       let* tree = get_or_create_tree map loc_name in
@@ -266,7 +266,7 @@ module Mem = struct
   let move map dst_loc dst_ofs src_loc src_ofs sz =
     let open DR.Syntax in
     let open Formula.Infix in
-    if%sat sz #== (Expr.int 0) then DR.ok map
+    if%sat sz %== Expr.int 0 then DR.ok map
     else
       let** dst_loc_name = resolve_loc_result dst_loc in
       let** src_loc_name = resolve_loc_result src_loc in

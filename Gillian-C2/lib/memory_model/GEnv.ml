@@ -55,9 +55,7 @@ struct
     try
       let cur_symb = StringMap.find sym genv.symb in
       let cur_symb_e = Gil_syntax.Expr.loc_from_loc_name cur_symb in
-      let learned =
-        (Def_value.of_lt block) #== (Def_value.of_expr cur_symb_e)
-      in
+      let learned = Def_value.of_lt block %== Def_value.of_expr cur_symb_e in
       return ~learned genv
     with Not_found ->
       let+ block = Delayed_hack.resolve_or_create_lt block in
@@ -72,7 +70,7 @@ struct
       match (def, cur_def) with
       | GlobVar a, GlobVar b | FunDef a, FunDef b ->
           let open Delayed_hack in
-          return ~learned:a #== b genv
+          return ~learned:(a %== b) genv
       | _ ->
           failwith
             "Equality between a global variable and a function definition"
@@ -281,7 +279,7 @@ module Symbolic =
 
       let ( #== ) a b =
         let open Gil_syntax.Formula.Infix in
-        [ a #== b ]
+        [ a %== b ]
 
       let resolve_or_create_lt lvar_loc : string t =
         let open Syntax in
@@ -289,7 +287,7 @@ module Symbolic =
         match loc_name with
         | None ->
             let new_loc_name = Gil_syntax.ALoc.alloc () in
-            let learned = lvar_loc #== (ALoc new_loc_name) in
+            let learned = lvar_loc %== ALoc new_loc_name in
             Logging.verbose (fun fmt ->
                 fmt "Couldn't resolve loc %a, created %s" Gil_syntax.Expr.pp
                   lvar_loc new_loc_name);

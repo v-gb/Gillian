@@ -2025,7 +2025,7 @@ module Make (State : SState.S) :
               (fun old_out new_out ->
                 let open Formula.Infix in
                 Asrt.Pure
-                  (Expr.PVar old_out) #== (subst_in_expr pvar_subst new_out))
+                  (Expr.PVar old_out %== subst_in_expr pvar_subst new_out))
               out_params new_outs_learn
           in
           let atoms = List.rev_append new_cps learning_equalities in

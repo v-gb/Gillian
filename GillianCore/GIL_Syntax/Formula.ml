@@ -408,12 +408,12 @@ module Infix = struct
   let ( #> ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x > y)
-    | _ -> fnot a #<= b
+    | _ -> fnot (a %<= b)
 
   let ( #>= ) a b =
     match (a, b) with
     | Expr.Lit (Int x), Expr.Lit (Int y) -> of_bool (x >= y)
-    | _ -> fnot a #< b
+    | _ -> fnot (a %< b)
 
   let ( #<. ) a b =
     match (a, b) with
@@ -428,12 +428,12 @@ module Infix = struct
   let ( #>. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x > y)
-    | _ -> fnot a #<= b
+    | _ -> fnot (a %<= b)
 
   let ( #>=. ) a b =
     match (a, b) with
     | Expr.Lit (Num x), Expr.Lit (Num y) -> of_bool (x >= y)
-    | _ -> fnot a #< b
+    | _ -> fnot (a %< b)
 
   let ( #=> ) fa fb =
     match (fa, fb) with
