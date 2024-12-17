@@ -425,7 +425,7 @@ let rec assume_type ~ctx (type_ : GType.t) (expr : Expr.t) : unit Cs.with_cmds =
       let assume_int = Cmd.Logic (AssumeType (expr, IntType)) in
       let condition =
         let open Formula.Infix in
-        expr #== Expr.one_i #|| (expr #== Expr.zero_i)
+        expr ==@ Expr.one_i ||@ (expr ==@ Expr.zero_i)
       in
       let assume_range = Cmd.Logic (Assume condition) in
       Cs.return ~app:[ assume_int; assume_range ] ()
@@ -440,7 +440,7 @@ let rec assume_type ~ctx (type_ : GType.t) (expr : Expr.t) : unit Cs.with_cmds =
         | Some (low, high) ->
             let open Formula.Infix in
             let condition =
-              (Expr.int_z low) #<= expr #&& (expr #<= (Expr.int_z high))
+              Expr.int_z low <=@ expr &&@ (expr <=@ Expr.int_z high)
             in
             [ Cmd.Logic (Assume condition) ]
       in
@@ -545,7 +545,7 @@ let rec nondet_expr ~ctx ~loc ~type_ ~display () : Val_repr.t Cs.with_body =
              let variant_int = LCmd.AssumeType (variant, IntType) in
              let variant_constraint =
                let open Formula.Infix in
-               Expr.zero_i #<= variant #&& (variant #< variant_number)
+               Expr.zero_i <=@ variant &&@ (variant <@ variant_number)
              in
              let variant_value = LCmd.Assume variant_constraint in
              Cs.return
@@ -1133,12 +1133,12 @@ and compile_address_of ~ctx ~b (expr : GExpr.t) x =
       assert ctx.machine.null_is_zero;
       let assume_not_null =
         let open Formula.Infix in
-        b (Cmd.Logic (Assume (fnot ptr #== Expr.zero_i)))
+        b (Cmd.Logic (Assume (fnot (ptr ==@ Expr.zero_i))))
       in
       let assume_align_8 =
         let open Formula.Infix in
         let mod_8 = Expr.BinOp (ptr, IMod, Expr.int 8) in
-        b (Cmd.Logic (Assume mod_8 #== Expr.zero_i))
+        b (Cmd.Logic (Assume (mod_8 ==@ Expr.zero_i)))
       in
       Cs.return ~app:[ assume_not_null; assume_align_8 ] (Val_repr.ByValue ptr)
       (* Should probably just return a long, with a nondet value that has the right offset *)

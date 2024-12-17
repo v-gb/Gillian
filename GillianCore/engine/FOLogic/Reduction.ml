@@ -2986,8 +2986,8 @@ let rec reduce_formula_loop
             | EList l -> l
             | _ -> failwith "unreachable"
           in
-          List.map (fun x -> Formula.Infix.(x #== k)) l
-          |> List.fold_left Formula.Infix.( #&& ) Formula.True
+          List.map (fun x -> Formula.Infix.(x ==@ k)) l
+          |> List.fold_left Formula.Infix.( &&@ ) Formula.True
       | ForAll (bt, a) -> (
           (* We create a new pfs and gamma where:
              - All shadowed variables are substituted with a fresh variable

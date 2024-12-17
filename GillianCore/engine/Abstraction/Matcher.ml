@@ -1386,12 +1386,12 @@ module Make (State : SState.S) :
                   Formula.pp f
             | Some pf -> (
                 let discharges_pf =
-                  List.fold_left Formula.Infix.( #&& ) True discharges
+                  List.fold_left Formula.Infix.( &&@ ) True discharges
                 in
                 let discharges_pf =
                   Reduction.reduce_formula ~matching:true discharges_pf
                 in
-                let to_asrt = Formula.Infix.( #&& ) pf discharges_pf in
+                let to_asrt = Formula.Infix.( &&@ ) pf discharges_pf in
                 match cons_pure state to_asrt with
                 | Success new_state ->
                     Res_list.return
@@ -2025,7 +2025,7 @@ module Make (State : SState.S) :
               (fun old_out new_out ->
                 let open Formula.Infix in
                 Asrt.Pure
-                  (Expr.PVar old_out) #== (subst_in_expr pvar_subst new_out))
+                  (Expr.PVar old_out ==@ subst_in_expr pvar_subst new_out))
               out_params new_outs_learn
           in
           let atoms = List.rev_append new_cps learning_equalities in

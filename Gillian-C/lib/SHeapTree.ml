@@ -88,17 +88,17 @@ module Range = struct
 
   let is_equal (la, ha) (lb, hb) =
     let open Formula.Infix in
-    la #== lb #&& (ha #== hb)
+    la ==@ lb &&@ (ha ==@ hb)
 
   let is_inside (la, ha) (lb, hb) =
     let open Formula.Infix in
-    lb #<= la #&& (ha #<= hb)
+    lb <=@ la &&@ (ha <=@ hb)
 
   let size (a, b) = Expr.Infix.( - ) b a
 
   let point_strictly_inside x (l, h) =
     let open Formula.Infix in
-    l #< x #&& (x #< h)
+    l <@ x &&@ (x <@ h)
 
   let split_at (l, h) x = ((l, x), (x, h))
   let lvars (a, b) = SS.union (Expr.lvars a) (Expr.lvars b)
@@ -328,7 +328,7 @@ module Node = struct
         let open Expr.Infix in
         let open Formula.Infix in
         (* FIXME: This assumes big endian *)
-        if%sat (Expr.list_length e) #== (Expr.int size) then
+        if%sat Expr.list_length e ==@ Expr.int size then
           let bytes = List.init size (fun i -> Expr.list_nth e i) in
           let _, v =
             List.fold_left
@@ -341,8 +341,7 @@ module Node = struct
             List.filter_map
               (function
                 | Expr.Lit Undefined -> None
-                | byte ->
-                    Some byte #>= (Expr.int 0) #&& (byte #<= (Expr.int 255)))
+                | byte -> Some (byte >=@ Expr.int 0 &&@ (byte <=@ Expr.int 255)))
               bytes
           in
           let* v = SVal.of_chunk_and_expr chunk v in
@@ -662,7 +661,7 @@ module Tree = struct
     let nl, nh = range in
     if%sat
       log_string "ol #== nl";
-      ol #== nl
+      ol ==@ nl
     then
       let at = nh in
       let* left_node, right_node = Node.split ~span:old_span ~at t.node in
@@ -673,7 +672,7 @@ module Tree = struct
     else
       if%sat
         log_string "oh #== nh";
-        oh #== nh
+        oh ==@ nh
       then
         let at = nl in
         let* left_node, right_node = Node.split ~span:old_span ~at t.node in
@@ -699,7 +698,7 @@ module Tree = struct
     let rl, rh = range in
     let sl, sh = t.span in
     let* t_with_left =
-      if%sat rl #< sl then
+      if%sat rl <@ sl then
         let new_left_tree = make ~node:(NotOwned Totally) ~span:(rl, sl) () in
         let children = (new_left_tree, t) in
         Delayed.return
@@ -708,7 +707,7 @@ module Tree = struct
     in
     let sl, _ = t_with_left.span in
     let* result =
-      if%sat rh #> sh then
+      if%sat rh >@ sh then
         let new_right_tree = make ~node:(NotOwned Totally) ~span:(sh, rh) () in
         let children = (t_with_left, new_right_tree) in
         Delayed.return
@@ -1063,7 +1062,7 @@ module Tree = struct
         let types =
           List.map
             (let open Formula.Infix in
-             fun (x, t) -> Asrt.Pure (Expr.typeof x) #== (Expr.type_ t))
+             fun (x, t) -> Asrt.Pure (Expr.typeof x ==@ Expr.type_ t))
             types
         in
         CoreP.single ~loc ~ofs:low ~chunk ~sval ~perm :: types
@@ -1194,7 +1193,7 @@ let weak_valid_pointer (t : t) (ofs : Expr.t) : (bool, err) DR.t =
     let open Formula.Infix in
     match bounds with
     | None -> Formula.False
-    | Some (low, high) -> ofs #< low #|| (ofs #> high)
+    | Some (low, high) -> ofs <@ low ||@ (ofs >@ high)
   in
   match t with
   | Freed -> DR.ok false
@@ -1406,7 +1405,7 @@ let _check_valid_alignment chunk ofs =
   let al_expr = Expr.int al in
   let divides x y =
     let open Formula.Infix in
-    Expr.(y #== (int 0)) #|| ((Expr.imod y x) #== (Expr.int 0))
+    Expr.(y ==@ int 0) ||@ (Expr.imod y x ==@ Expr.int 0)
   in
   if%sat divides al_expr ofs then DR.ok ()
   else DR.error (InvalidAlignment { offset = ofs; alignment = al })

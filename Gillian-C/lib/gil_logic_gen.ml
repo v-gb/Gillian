@@ -36,7 +36,7 @@ let rec split3_expr_comp = function
 let ( ++ ) = Expr.Infix.( + )
 
 let ( == ) e1 e2 =
-  match e1 #== e2 with
+  match e1 ==@ e2 with
   | True -> Asrt.Emp
   | f -> Pure f
 
@@ -56,7 +56,7 @@ let types t e =
       static_error () (* Maybe a more precise message ? *)
   | _ -> Emp
 
-let fold_and l = List.fold_left (fun a b -> a #&& b) Formula.True l
+let fold_and l = List.fold_left (fun a b -> a &&@ b) Formula.True l
 
 let to_assrt_of_gen_form f =
   match f with
@@ -155,7 +155,7 @@ let assert_of_member cenv members id typ =
     in
     let list_is_components =
       let open Formula.Infix in
-      Asrt.Pure pvmember #== (Expr.list args_without_ins)
+      Asrt.Pure (pvmember ==@ Expr.list args_without_ins)
     in
     let ofs =
       let open Expr.Infix in
@@ -432,15 +432,15 @@ let rec trans_form (f : CFormula.t) : Asrt.t * Var.t list * Formula.t =
   | Eq (ce1, ce2) ->
       let f1, v1, eg1 = trans_expr ce1 in
       let f2, v2, eg2 = trans_expr ce2 in
-      (f1 ** f2, v1 @ v2, eg1 #== eg2)
+      (f1 ** f2, v1 @ v2, eg1 ==@ eg2)
   | LessEq (ce1, ce2) ->
       let f1, v1, eg1 = trans_expr ce1 in
       let f2, v2, eg2 = trans_expr ce2 in
-      (f1 ** f2, v1 @ v2, eg1 #<= eg2)
+      (f1 ** f2, v1 @ v2, eg1 <=@ eg2)
   | Less (ce1, ce2) ->
       let f1, v1, eg1 = trans_expr ce1 in
       let f2, v2, eg2 = trans_expr ce2 in
-      (f1 ** f2, v1 @ v2, eg1 #< eg2)
+      (f1 ** f2, v1 @ v2, eg1 <@ eg2)
   | SetMem (ce1, ce2) ->
       let f1, v1, eg1 = trans_expr ce1 in
       let f2, v2, eg2 = trans_expr ce2 in
@@ -451,15 +451,15 @@ let rec trans_form (f : CFormula.t) : Asrt.t * Var.t list * Formula.t =
   | Or (f1, f2) ->
       let a1, v1, fp1 = trans_form f1 in
       let a2, v2, fp2 = trans_form f2 in
-      (a1 ** a2, v1 @ v2, fp1 #|| fp2)
+      (a1 ** a2, v1 @ v2, fp1 ||@ fp2)
   | And (f1, f2) ->
       let a1, v1, fp1 = trans_form f1 in
       let a2, v2, fp2 = trans_form f2 in
-      (a1 ** a2, v1 @ v2, fp1 #&& fp2)
+      (a1 ** a2, v1 @ v2, fp1 &&@ fp2)
   | Implies (f1, f2) ->
       let a1, v1, fp1 = trans_form f1 in
       let a2, v2, fp2 = trans_form f2 in
-      (a1 ** a2, v1 @ v2, fp1 #=> fp2)
+      (a1 ** a2, v1 @ v2, fp1 =>@ fp2)
   | ForAll (lvts, f) ->
       let a, v, fp = trans_form f in
       (a, v, ForAll (lvts, fp))

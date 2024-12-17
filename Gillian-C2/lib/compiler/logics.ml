@@ -9,7 +9,7 @@ let rec asrt_of_scalar_like ~ctx (type_ : GType.t) (expr : Expr.t) : Asrt.t =
       let assume_int = Asrt.Types [ (expr, IntType) ] in
       let condition =
         let open Formula.Infix in
-        expr #== Expr.one_i #|| (expr #== Expr.zero_i)
+        expr ==@ Expr.one_i ||@ (expr ==@ Expr.zero_i)
       in
       let asrt_range = Asrt.Pure condition in
       assume_int ** asrt_range
@@ -24,7 +24,7 @@ let rec asrt_of_scalar_like ~ctx (type_ : GType.t) (expr : Expr.t) : Asrt.t =
         | Some (low, high) ->
             let open Formula.Infix in
             let condition =
-              (Expr.int_z low) #<= expr #&& (expr #<= (Expr.int_z high))
+              Expr.int_z low <=@ expr &&@ (expr <=@ Expr.int_z high)
             in
             Asrt.Pure condition
       in
